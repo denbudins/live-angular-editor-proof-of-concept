@@ -1,0 +1,58 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 24px;
+  padding: 0 12px;
+  background: #040d21;
+  border-top: 1px solid #21262d;
+  font-size: 11px;
+  color: #6e7681;
+  font-family: "JetBrains Mono", monospace;
+  flex-shrink: 0;
+}
+
+.bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sep {
+  opacity: 0.3;
+}
+.muted {
+  opacity: 0.6;
+}
+.ng {
+  background: #dd0031;
+  color: white;
+  padding: 0 4px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+  flex-shrink: 0;
+  transition: background 0.3s;
+  &.compiling {
+    background: #d29922;
+    animation: blink 0.7s infinite;
+  }
+  &.error {
+    background: #f85149;
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}

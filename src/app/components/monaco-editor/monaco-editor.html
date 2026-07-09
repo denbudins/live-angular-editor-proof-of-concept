@@ -1,0 +1,17 @@
+<div class="tab-bar">
+  @for (tab of tabs; track tab.key) {
+  <button
+    class="tab"
+    [class.active]="activeTab().key === tab.key"
+    (click)="switchTab(tab)"
+  >
+    <span class="tab-icon" [class]="'icon-' + tab.icon">
+      {{ tab.icon.toUpperCase() }}
+    </span>
+    {{ tab.label }}
+  </button>
+  }
+</div>
+
+<!-- Monaco editor -->
+<div class="editor-host" #editorHost></div>

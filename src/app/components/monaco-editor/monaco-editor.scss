@@ -1,0 +1,75 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.tab-bar {
+  display: flex;
+  background: #010409;
+  border-bottom: 1px solid #21262d;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 35px;
+  font-size: 12px;
+  font-family: "JetBrains Mono", monospace;
+  color: #6e7681;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-right: 1px solid #21262d;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 0.15s,
+    background 0.15s;
+
+  &:hover {
+    color: #8b949e;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  &.active {
+    color: #e6edf3;
+    background: #0d1117;
+    border-bottom-color: #388bfd;
+  }
+}
+
+.tab-icon {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+.icon-ts {
+  background: #1a4ba1;
+  color: #60a5fa;
+}
+.icon-html {
+  background: #7c2d12;
+  color: #fb923c;
+}
+.icon-scss {
+  background: #4a1d62;
+  color: #c084fc;
+}
+
+.editor-host {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
