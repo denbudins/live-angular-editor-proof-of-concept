@@ -60,7 +60,12 @@
 
     <!-- Right panel — Monaco editor with tabs -->
     <div class="panel panel-editor" [style.width.%]="editorPct()">
-      <app-monaco-editor #editorPanel />
+      <app-monaco-editor
+        #editorPanel
+        [tsPath]="tsPath()"
+        [htmlPath]="htmlPath()"
+        [scssPath]="scssPath()"
+      ></app-monaco-editor>
     </div>
   </div>
 

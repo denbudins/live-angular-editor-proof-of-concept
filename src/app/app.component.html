@@ -1,5 +1,9 @@
 <main>
-  <app-live-editor></app-live-editor>
+  <app-live-editor
+    [tsPath]="'components/table-components/table.ts'"
+    [htmlPath]="'components/table-components/table.html'"
+    [scssPath]="'components/table-components/table.scss'"
+  ></app-live-editor>
 </main>
 
 <router-outlet />

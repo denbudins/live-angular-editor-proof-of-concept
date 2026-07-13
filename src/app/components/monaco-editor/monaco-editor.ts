@@ -5,8 +5,11 @@ import {
   OnDestroy,
   signal,
   inject,
+  input,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
-import { MonacoEditorService } from '../../services';
+import { CodeSampleService, MonacoEditorService } from '../../services';
 
 export interface ComponentFiles {
   ts: string; // component.ts
@@ -53,22 +56,64 @@ const TABS: EditorTab[] = [
   styleUrl: './monaco-editor.scss',
 })
 export class MonacoEditorComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('editorHost') private hostEl!: ElementRef<HTMLDivElement>;
+
+  public tsPath = input.required<string>();
+  public htmlPath = input<string>();
+  public scssPath = input<string>();
+
   private monacoEditorService = inject(MonacoEditorService);
+  private componentSourceService = inject(CodeSampleService);
 
   protected readonly activeTab = signal<EditorTab>(TABS[0]);
   protected readonly tabs = TABS;
 
   private editor: any;
+  private models: Record<string, any> = {};
 
-  public ngAfterViewInit(): void {
-    this.monacoEditorService.load(() => this.setInitEditorContent());
+  public async ngAfterViewInit(): Promise<void> {
+    await this.monacoEditorService.load();
+    await this.setInitEditorContent();
   }
 
   public ngOnDestroy(): void {
     this.editor?.dispose();
   }
 
-  protected switchTab(tab: EditorTab): void {}
+  protected switchTab(tab: EditorTab): void {
+    if (!this.editor || !this.models[tab.key]) return;
+    this.activeTab.set(tab);
+    this.editor.setModel(this.models[tab.key]);
+    this.editor.focus();
+  }
 
-  private async setInitEditorContent(): Promise<void> {}
+  private async setInitEditorContent(): Promise<void> {
+    this.models = {
+      ts: this.monacoEditorService.getOrCreateModel(
+        TABS[0].uri,
+        'typescript',
+        await this.componentSourceService.fetchFile(this.tsPath()),
+      ),
+    };
+
+    if (this.htmlPath()) {
+      this.models['html'] = this.monacoEditorService.getOrCreateModel(
+        TABS[1].uri,
+        'html',
+        await this.componentSourceService.fetchFile(this.htmlPath()!),
+      );
+    }
+    if (this.scssPath()) {
+      this.models['scss'] = this.monacoEditorService.getOrCreateModel(
+        TABS[2].uri,
+        'scss',
+        await this.componentSourceService.fetchFile(this.scssPath()!),
+      );
+    }
+
+    this.editor = this.monacoEditorService.createEditor(
+      this.hostEl.nativeElement,
+      this.models['ts'],
+    );
+  }
 }
