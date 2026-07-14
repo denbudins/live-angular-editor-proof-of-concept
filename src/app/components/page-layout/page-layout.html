@@ -1,21 +1,12 @@
 <div class="layout">
   <header class="topbar">
-    <div class="topbar-left">
-      <div class="logo">
-        <span class="logo-ng">ng</span>
-        <span class="logo-text">live</span>
-      </div>
-      <div class="vdivider"></div>
-      <span class="filename">preview.component</span>
-    </div>
-
     <div class="topbar-right">
       <div class="compile-status">
         <span class="dot"></span>
         <span>Compiled ✓</span>
       </div>
 
-      <button class="btn-run">
+      <button class="btn-run" (click)="onClickRun()">
         <svg width="11" height="11" viewBox="0 0 12 12">
           <path d="M2 1.5l8 4.5-8 4.5V1.5z" fill="currentColor" />
         </svg>
@@ -27,30 +18,7 @@
   <div class="panels">
     <!-- Left panel — Angular preview -->
     <div class="panel panel-preview" [style.width.%]="100 - editorPct() - 0.3">
-      <div class="panel-header">
-        <div class="file-tab active preview-tab">
-          <svg width="12" height="12" viewBox="0 0 12 12">
-            <circle
-              cx="6"
-              cy="6"
-              r="4.5"
-              stroke="#f87171"
-              stroke-width="1"
-              fill="none"
-            />
-            <path
-              d="M4 6l1.5 1.5L8 4"
-              stroke="#f87171"
-              stroke-width="1"
-              fill="none"
-              stroke-linecap="round"
-            />
-          </svg>
-          Preview
-        </div>
-        <span class="preview-badge">Angular 21 · JIT</span>
-      </div>
-      <app-preview-component #previewHost />
+      <app-preview-component #previewHost [code]="this.componentCode()" />
     </div>
 
     <!-- Splitter -->

@@ -87,6 +87,14 @@ export class MonacoEditorComponent implements AfterViewInit, OnDestroy {
     this.editor.focus();
   }
 
+  public getTabsContent(): ComponentFiles {
+    return {
+      ts: this.models['ts']?.getValue() ?? '',
+      html: this.models['html']?.getValue() ?? '',
+      scss: this.models['scss']?.getValue() ?? '',
+    };
+  }
+
   private async setInitEditorContent(): Promise<void> {
     this.models = {
       ts: this.monacoEditorService.getOrCreateModel(

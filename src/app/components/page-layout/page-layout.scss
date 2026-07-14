@@ -26,7 +26,7 @@ $green-btn: #1a7f37;
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 44px;
   padding: 0 16px;
   background: $bg-bar;

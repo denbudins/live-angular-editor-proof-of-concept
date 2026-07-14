@@ -1,6 +1,13 @@
-import { Component, inject } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CompilerService } from '../../services';
+import { CompilerService, MonacoEditorService } from '../../services';
 
 @Component({
   selector: 'app-preview-component',
@@ -11,4 +18,18 @@ import { CompilerService } from '../../services';
 })
 export class PreviewComponent {
   readonly compiler = inject(CompilerService);
+
+  @ViewChild('previewAnchor', { read: ViewContainerRef, static: true })
+  readonly previewAnchor!: ViewContainerRef;
+
+  public code = input.required<string>();
+
+  constructor() {
+    effect(() => {
+      if (!this.code()) return;
+      this.previewAnchor.clear();
+      const compiledJS = this.compiler.compileComponentFromString(this.code());
+      this.previewAnchor.createComponent(compiledJS);
+    });
+  }
 }
