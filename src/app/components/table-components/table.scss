@@ -1,90 +1,147 @@
-.container {
-  padding: 24px;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background: #f8fafc;
-  min-height: 100vh;
+@use "sass:map";
+
+$spacing: 24px;
+$radius: 10px;
+$pill-radius: 20px;
+
+$colors: (
+  bg: #f8fafc,
+  white: #fff,
+  text: #0f172a,
+  secondary: #334155,
+  muted: #94a3b8,
+  border: #e2e8f0,
+  border-light: #f1f5f9,
+  success: #16a34a,
+  success-bg: #dcfce7,
+  danger: #dc2626,
+  danger-bg: #fee2e2,
+);
+
+@function color($name) {
+  @return map.get($colors, $name);
 }
 
-.header {
+@mixin flex-center($gap: 12px) {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: $gap;
 }
 
-h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #0f172a;
-  font-weight: 600;
+@mixin pill($bg, $fg) {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: $pill-radius;
+  background: $bg;
+  color: $fg;
 }
 
-.badge {
-  background: #e2e8f0;
-  color: #475569;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-th {
-  text-align: left;
-  padding: 12px 16px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #64748b;
-  background: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-td {
+%table-cell {
   padding: 12px 16px;
   font-size: 14px;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
 }
 
-tr:last-child td {
-  border-bottom: none;
-}
-tr:hover td {
-  background: #f8fafc;
+.container {
+  padding: $spacing;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: color(bg);
+  min-height: 100vh;
+
+  .header {
+    @include flex-center;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: color(text);
+      font-weight: 600;
+    }
+
+    .badge {
+      @include pill(color(border), #475569);
+      font-size: 12px;
+      padding: 2px 10px;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: color(white);
+    border-radius: $radius;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(#000, 0.08);
+
+    th {
+      @extend %table-cell;
+
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      background: color(border-light);
+      border-bottom: 1px solid color(border);
+    }
+
+    td {
+      @extend %table-cell;
+
+      color: color(secondary);
+      border-bottom: 1px solid color(border-light);
+
+      &:first-child {
+        font-weight: 500;
+      }
+    }
+
+    tr {
+      &:hover td {
+        background: color(bg);
+      }
+
+      &:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
+    }
+  }
 }
 
-.id {
-  color: #94a3b8;
-  font-size: 13px;
-}
-.name {
-  font-weight: 500;
-  color: #0f172a;
-}
-.date {
-  color: #94a3b8;
-  font-size: 13px;
+@each $class,
+  $value in (id: color(muted), date: color(muted), name: color(text))
+{
+  .#{$class} {
+    color: $value;
+
+    @if $class == name {
+      font-weight: 500;
+    } @else {
+      font-size: 13px;
+    }
+  }
 }
 
 .status {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
+  @include pill(color(danger-bg), color(danger));
   font-size: 12px;
   font-weight: 500;
-  background: #fee2e2;
-  color: #dc2626;
+
+  &.active {
+    background: color(success-bg);
+    color: color(success);
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+    width: fit-content;
+  }
 }
 
-.status.active {
-  background: #dcfce7;
-  color: #16a34a;
+@for $i from 1 through 5 {
+  .mt-#{$i} {
+    margin-top: #{$i * 4}px;
+  }
 }

@@ -18,7 +18,12 @@
   <div class="panels">
     <!-- Left panel — Angular preview -->
     <div class="panel panel-preview" [style.width.%]="100 - editorPct() - 0.3">
-      <app-preview-component #previewHost [code]="this.componentCode()" />
+      <app-preview-component
+        #previewHost
+        [htmlCode]="this.codes().html"
+        [scssCode]="this.codes().scss"
+        [tsCode]="this.codes().ts"
+      />
     </div>
 
     <!-- Splitter -->

@@ -22,13 +22,19 @@ export class PreviewComponent {
   @ViewChild('previewAnchor', { read: ViewContainerRef, static: true })
   readonly previewAnchor!: ViewContainerRef;
 
-  public code = input.required<string>();
+  public htmlCode = input.required<string>();
+  public scssCode = input.required<string>();
+  public tsCode = input.required<string>();
 
   constructor() {
-    effect(() => {
-      if (!this.code()) return;
+    effect(async () => {
+      if (!this.tsCode()) return;
       this.previewAnchor.clear();
-      const compiledJS = this.compiler.compileComponentFromString(this.code());
+      const compiledJS = await this.compiler.compileComponentFromString(
+        this.htmlCode(),
+        this.scssCode(),
+        this.tsCode(),
+      );
       this.previewAnchor.createComponent(compiledJS);
     });
   }
