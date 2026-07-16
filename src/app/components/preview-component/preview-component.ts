@@ -35,6 +35,7 @@ export class PreviewComponent {
         this.scssCode(),
         this.tsCode(),
       );
+      // we need give function here to create component
       this.previewAnchor.createComponent(compiledJS);
     });
   }
