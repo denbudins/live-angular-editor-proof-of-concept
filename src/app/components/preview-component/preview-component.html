@@ -2,19 +2,19 @@
   <ng-container #previewAnchor></ng-container>
 
   <!-- Loading overlay -->
-  <!-- @if (isCompiling()) {
+  @if (isCompiling()) {
   <div class="overlay loading-overlay">
     <div class="spinner"></div>
     <span>Compiling...</span>
   </div>
-  } -->
+  }
 
   <!-- Error overlay -->
-  <!-- @if (errorMessage(); as error) {
+  @if (errorMessage(); as error) {
   <div class="overlay error-overlay">
     <div class="error-icon">!</div>
     <div class="error-title">Compilation error</div>
     <pre class="error-pre">{{ error }}</pre>
   </div>
-  } -->
+  }
 </div>

@@ -1,4 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.readonly-region-line {
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0.6;
+}
+.readonly-region-gutter::before {
+  content: "🔒";
+  font-size: 10px;
+  opacity: 0.5;
+  padding-left: 4px;
+}

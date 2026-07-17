@@ -10,6 +10,11 @@ import {
   ElementRef,
 } from '@angular/core';
 import { CodeSampleService, MonacoEditorService } from '../../services';
+import {
+  constrainedEditor,
+  ConstrainedInstance,
+  EditorRestriction,
+} from 'constrained-editor-plugin';
 
 export interface ComponentFiles {
   ts: string; // component.ts
@@ -122,6 +127,10 @@ export class MonacoEditorComponent implements AfterViewInit, OnDestroy {
     this.editor = this.monacoEditorService.createEditor(
       this.hostEl.nativeElement,
       this.models['ts'],
+    );
+
+    Object.values(this.models).forEach((model) =>
+      this.monacoEditorService.applyEditableRegions(model),
     );
   }
 }

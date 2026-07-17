@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 
+// @editable:start
 interface User {
   id: number;
   name: string;
@@ -9,6 +10,7 @@ interface User {
   status: 'active' | 'inactive';
   joined: string;
 }
+// @editable:end
 
 @Component({
   selector: 'app-table',
@@ -16,7 +18,8 @@ interface User {
   templateUrl: './table.html',
   styleUrl: './table.scss',
 })
-export class TableComponent implements OnInit {
+export default class TableComponent implements OnInit {
+  // @editable:start
   users: User[] = [
     {
       id: 1,
@@ -57,4 +60,5 @@ export class TableComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'role', 'status', 'joined'];
 
   ngOnInit() {}
+  // @editable:end
 }

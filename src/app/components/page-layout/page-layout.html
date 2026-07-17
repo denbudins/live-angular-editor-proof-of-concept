@@ -1,9 +1,16 @@
 <div class="layout">
   <header class="topbar">
     <div class="topbar-right">
-      <div class="compile-status">
+      <div
+        class="compile-status"
+        [class.compiling]="isCompiling()"
+        [class.has-error]="previewHost.hasError()"
+      >
         <span class="dot"></span>
-        <span>Compiled ✓</span>
+        <span
+          >{{ isCompiling() ? 'Kompajliram...' : previewHost.hasError() ?
+          'Greška' : 'Compiled ✓' }}</span
+        >
       </div>
 
       <button class="btn-run" (click)="onClickRun()">
@@ -23,6 +30,7 @@
         [htmlCode]="this.codes().html"
         [scssCode]="this.codes().scss"
         [tsCode]="this.codes().ts"
+        [(isCompiling)]="isCompiling"
       />
     </div>
 
@@ -41,6 +49,4 @@
       ></app-monaco-editor>
     </div>
   </div>
-
-  <app-editor-status-bar />
 </div>

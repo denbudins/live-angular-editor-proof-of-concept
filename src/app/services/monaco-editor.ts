@@ -1,4 +1,9 @@
 import { Injectable, NgZone, inject } from '@angular/core';
+import {
+  constrainedEditor,
+  ConstrainedInstance,
+  EditorRestriction,
+} from 'constrained-editor-plugin';
 
 export type EditorLanguage = 'typescript' | 'html' | 'scss';
 
@@ -43,6 +48,8 @@ const DEFAULT_WORKER_PATH = `${MONACO_BASE_PATH}/editor/editor.worker.js`;
 export class MonacoEditorService {
   private zone = inject(NgZone);
   private loadPromise: Promise<MonacoGlobal> | null = null;
+  private constrainedInstance: ConstrainedInstance | null = null;
+  private restrictedUris = new Set<string>();
 
   public async load(): Promise<MonacoGlobal> {
     if (!this.loadPromise) {
@@ -71,6 +78,9 @@ export class MonacoEditorService {
       scrollbar: { verticalScrollbarSize: 6, horizontalScrollbarSize: 6 },
     });
 
+    this.constrainedInstance = constrainedEditor((window as any).monaco);
+    this.constrainedInstance.initializeIn(editor);
+
     new ResizeObserver(() => editor.layout()).observe(container);
     return editor;
   }
@@ -83,6 +93,50 @@ export class MonacoEditorService {
     const m = (window as any).monaco;
     const key = m.Uri.parse(uri);
     return m.editor.getModel(key) ?? m.editor.createModel(value, language, key);
+  }
+
+  public applyEditableRegions(model: any): void {
+    if (!this.constrainedInstance) return;
+
+    const uriKey = model.uri.toString();
+    if (this.restrictedUris.has(uriKey)) return;
+
+    const restrictions = this.computeEditableRestrictions(model);
+    if (restrictions.length) {
+      this.constrainedInstance.addRestrictionsTo(model, restrictions);
+      this.restrictedUris.add(uriKey);
+      this.highlightReadOnlyRegions(model, restrictions);
+    }
+  }
+
+  private computeEditableRestrictions(model: any): EditorRestriction[] {
+    const lines: string[] = model.getValue().split('\n');
+    const restrictions: EditorRestriction[] = [];
+
+    let startLine: number | null = null;
+
+    lines.forEach((line: string, index: number) => {
+      const lineNumber = index + 1;
+
+      if (line.includes('@editable:start')) {
+        startLine = lineNumber + 1;
+        return;
+      }
+
+      if (line.includes('@editable:end') && startLine !== null) {
+        const endLine = lineNumber - 1;
+        const endColumn = (lines[endLine - 1]?.length ?? 0) + 1;
+
+        restrictions.push({
+          range: [startLine, 1, endLine, endColumn],
+          allowMultiline: true,
+          label: `editable-${restrictions.length}`,
+        });
+        startLine = null;
+      }
+    });
+
+    return restrictions;
   }
 
   private loadInternal(): Promise<MonacoGlobal> {
@@ -138,5 +192,45 @@ export class MonacoEditorService {
       noSyntaxValidation: false,
       diagnosticCodesToIgnore: [2307, 2304, 2339, 2345, 2554, 1219],
     });
+  }
+
+  private highlightReadOnlyRegions(
+    model: any,
+    editableRestrictions: EditorRestriction[],
+  ): void {
+    const monaco = (window as any).monaco;
+    const totalLines = model.getLineCount();
+
+    const sorted = [...editableRestrictions].sort(
+      (a, b) => a.range[0] - b.range[0],
+    );
+
+    const readOnlyRanges: any[] = [];
+    let cursor = 1;
+
+    for (const { range } of sorted) {
+      const [startLine, , endLine] = range;
+      if (startLine > cursor) {
+        readOnlyRanges.push(new monaco.Range(cursor, 1, startLine - 1, 1));
+      }
+      cursor = endLine + 1;
+    }
+    if (cursor <= totalLines) {
+      readOnlyRanges.push(new monaco.Range(cursor, 1, totalLines, 1));
+    }
+
+    const decorations = readOnlyRanges.map((range) => ({
+      range,
+      options: {
+        isWholeLine: true,
+        className: 'readonly-region-line',
+        linesDecorationsClassName: 'readonly-region-gutter',
+      },
+    }));
+
+    model._readonlyDecorationIds = model.deltaDecorations(
+      model._readonlyDecorationIds ?? [],
+      decorations,
+    );
   }
 }
