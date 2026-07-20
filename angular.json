@@ -29,7 +29,7 @@
                 "input": "public"
               },
               {
-                "glob": "**/*.{ts,html,scss}",
+                "glob": "**/*.{ts,html,scss,tsx}",
                 "input": "src/app"
               },
               {
@@ -95,7 +95,7 @@
                 "input": "public"
               },
               {
-                "glob": "**/*.{ts,html,scss}",
+                "glob": "**/*.{ts,html,scss,tsx}",
                 "input": "src/app"
               },
               {

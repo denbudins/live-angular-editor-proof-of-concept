@@ -10,7 +10,8 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CompilerService, MonacoEditorService } from '../../services';
+import { CompilerResolverService } from '../../services/compiler-resolver';
+import { CompilerType } from '../../utils/types/file-specification';
 
 @Component({
   selector: 'app-preview-component',
@@ -20,7 +21,7 @@ import { CompilerService, MonacoEditorService } from '../../services';
   styleUrl: './preview-component.scss',
 })
 export class PreviewComponent {
-  readonly compiler = inject(CompilerService);
+  readonly compiler = inject(CompilerResolverService);
 
   @ViewChild('previewAnchor', { read: ViewContainerRef, static: true })
   readonly previewAnchor!: ViewContainerRef;
@@ -32,6 +33,8 @@ export class PreviewComponent {
   public errorMessage = signal<string | null>(null);
   public hasError = computed(() => this.errorMessage() !== null);
 
+  private mountHandle: { dispose(): void } | null = null;
+
   constructor() {
     effect(async () => {
       if (!this.tsCode()) return;
@@ -39,14 +42,15 @@ export class PreviewComponent {
       this.isCompiling.set(true);
       this.previewAnchor.clear();
       try {
-        const compiledJS = await this.compiler.compileComponentFromString(
-          this.htmlCode(),
-          this.scssCode(),
-          this.tsCode(),
+        this.mountHandle = await this.compiler.compileComponentFromString(
+          CompilerType.Angular,
+          {
+            typescript: this.tsCode(),
+            html: this.htmlCode(),
+            scss: this.scssCode(),
+          },
+          this.previewAnchor,
         );
-        // we need give function here to create component
-        const componentRef = this.previewAnchor.createComponent(compiledJS);
-        componentRef.changeDetectorRef.detectChanges();
       } catch (error) {
         this.previewAnchor.clear();
         this.errorMessage.set((error as Error).message);
