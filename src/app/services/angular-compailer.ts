@@ -15,7 +15,8 @@ export class AngularCompilerService implements ICompiler<Type<any>> {
         const raw: any = await import('typescript');
         this.tsModule = raw.ModuleKind ? raw : raw.default;
       }
-      const uniqueId = crypto.randomUUID();
+
+      const uniqueId = this._generateId();
       let tsCode = sourceFiles['typescript'];
       const css = await this._compileScssToCss(sourceFiles['scss']);
       // Modify the TypeScript code to include the unique ID in the component's metadata
@@ -93,5 +94,9 @@ export class AngularCompilerService implements ICompiler<Type<any>> {
     } catch (error) {
       throw error;
     }
+  }
+
+  private _generateId(): string {
+    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   }
 }

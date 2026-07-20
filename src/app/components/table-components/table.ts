@@ -1,6 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow,
+  MatRowDef,
+  MatTable,
+} from '@angular/material/table';
 
 // @editable:start
 interface User {
@@ -14,7 +25,19 @@ interface User {
 
 @Component({
   selector: 'app-table',
-  imports: [CommonModule, MatTableModule],
+  imports: [
+    CommonModule,
+    MatTable,
+    MatHeaderCellDef,
+    MatHeaderRowDef,
+    MatColumnDef,
+    MatCellDef,
+    MatRowDef,
+    MatHeaderCell,
+    MatCell,
+    MatHeaderRow,
+    MatRow,
+  ],
   templateUrl: './table.html',
   styleUrl: './table.scss',
 })
